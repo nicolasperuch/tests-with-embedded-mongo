@@ -20,11 +20,22 @@ public class SaveRoute extends RouteBuilder {
         from("direct:saveUser")
                 .routeId("saveUser")
                     .process(this::saveUser)
+                    .process(this::returnOk)
                 .end();
+    }
+
+    private void returnOk(Exchange exchange) {
+        exchange.getIn().setBody("User saved!");
     }
 
     private void saveUser(Exchange exchange) {
         User user = (User) exchange.getIn().getBody();
         baseRepository.save(user);
+    }
+
+
+    public SaveRoute withBaseRepository(BaseRepository baseRepository) {
+        this.baseRepository = baseRepository;
+        return this;
     }
 }
